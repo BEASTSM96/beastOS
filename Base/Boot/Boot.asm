@@ -100,9 +100,15 @@ start:
 
 loading_msg     db "Loading beastOS...", CR, LF, 0x0
 welcome_msg     db "Welcome to beastOS.", CR, LF, 0x0
+
 username_msg    db "Enter a Username", CR, LF, 0x0
 password_msg    db "Enter a password", CR, LF, 0x0
+
 osinfo_msg      db "beastOS, ver=0.00.0001", CR, LF, 0x0
+help_1_msg      db "Press ALT+F1 to restart.", CR, LF, 0x0
+help_2_msg      db "Press ALT+F2 to logout.", CR, LF, 0x0
+help_3_msg      db "Press ALT+F3 to shutdown.", CR, LF, 0x0
+
 disk_error_msg  db "Error loading disk.", CR, LF, 0x0
 reboot_msg      db "Press any key to reboot.", CR, LF, 0x0
 
@@ -152,12 +158,8 @@ _getUsernameinput:
     jmp _STAGE_3_
 
 _STAGE_3_:
-
-    ;set x y position to text
-	mov ah, 0x02
-	mov bh, 0x00
-	mov dh, 0x08
-	mov dl, 0x12
+    mov al, 2
+	mov ah, 0
 	int 0x10
 
     mov si, welcome_msg
@@ -171,6 +173,11 @@ _STAGE_3_:
 
     mov si, osinfo_msg
     call write_string
+
+    mov si, help_1_msg
+    call write_string
+    call reboot
+
 
 
 
