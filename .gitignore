@@ -2,3 +2,10 @@
 *.iso
 *.flp
 *.floppy
+CrossCompiler
+**/CrossCompiler
+*/CrossCompiler
+CrossCompiler/*
+bin
+Tools
+isodir
