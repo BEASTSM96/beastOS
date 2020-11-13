@@ -1,7 +1,6 @@
 #include "kernel.h"
-#include "VGA.h"
-
-extern "C" {
+#include "Common/Base_defs.h"
+#include "Common/VGA.h"
 
 namespace bOS::Kernel
 {
@@ -19,12 +18,12 @@ namespace bOS::Kernel
     void Terminal::Terminal_Initialize() {
         terminal_row = 0;
         terminal_column = 0;
-        terminal_color = vga_entry_color(VGA_COLOR_LIGHT_GREY, VGA_COLOR_BLACK);
+        terminal_color = VGA::Entry_color(VGA::Color::LIGHT_GREY, VGA::Color::BLACK);
         terminal_buffer = (uint16_t*) 0xB8000;
         for (size_t y = 0; y < 25; y++) {
             for (size_t x = 0; x < 80; x++) {
                 const size_t index = y * 80 + x;
-                terminal_buffer[index] = vga_entry(' ', terminal_color);
+                terminal_buffer[index] = VGA::Entry(' ', terminal_color);
             }
         }
     }
@@ -37,7 +36,7 @@ namespace bOS::Kernel
         return len;
     }
     
-    void  Terminal::Terminal_Setcolor(uint8_t color) 
+    void Terminal::Terminal_Setcolor(uint8_t color) 
     {
         terminal_color = color;
     }
@@ -45,7 +44,7 @@ namespace bOS::Kernel
     void Terminal::Terminal_Putentryat(char c, uint8_t color, size_t x, size_t y) 
     {
         const size_t index = y * 80 + x;
-        terminal_buffer[index] = vga_entry(c, color);
+        terminal_buffer[index] = VGA::Entry(c, color);
     }
 
     void Terminal::Terminal_Putchar(char c) 
@@ -74,6 +73,7 @@ namespace bOS::Kernel
         Terminal_Write(data, strlen(data));
     }
 
+    extern "C" {
     void kernel_main(void)
     {
         bOS::Kernel::Kernel krnl = bOS::Kernel::Kernel();
@@ -84,23 +84,19 @@ namespace bOS::Kernel
 
         krnl.Run();
     }
+    }
 
     void Kernel::Run()
     {
         Terminal Kernel_Loader_Terminal = Terminal();
         Kernel_Loader_Terminal.Terminal_Initialize();
+        Kernel_Loader_Terminal.Terminal_Setcolor(VGA::Color::GREEN);
 
         Kernel_Loader_Terminal.Terminal_WriteString("Loading...");
-        Kernel_Loader_Terminal.Terminal_WriteString("\n");
-        Kernel_Loader_Terminal.Terminal_WriteString("Function called by kernel_main now into <baseclass>::Run()");
-        //Kernel_Loader_Terminal.Terminal_WriteString("\n");
-        //Kernel_Loader_Terminal.Terminal_WriteString("Creating Terminal...");
-        //Kernel_Loader_Terminal.Terminal_WriteString("\n");
-
-        //Terminal Debug_Terminal = Terminal();
-        //Debug_Terminal.Terminal_WriteString("Hello from cpp!");
-        //Debug_Terminal.Terminal_Initialize();
+        Kernel_Loader_Terminal.Terminal_WriteString("\n\n");
+        
+        for(;;) {
+            hlt();
+        }
     }
-
-}
 }
