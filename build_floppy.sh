@@ -4,13 +4,18 @@ CURRDIR="$(dirname "$(realpath "$0")")"
 BASEDIR=$CURRDIR/Base
 BOOTDIR=$BASEDIR/Boot
 KRNLDIR=$BASEDIR/krnl
+
+mkdir -p $CURRDIR/bin
+BINDIR=$CURRDIR/bin
+
 echo "Compile [0/base/boot]"
-nasm $BOOTDIR/Boot.asm -o $CURRDIR/Boot.bin
-##echo "Compile [0/base/krnl]"
-##gcc -o Kernel.bin -c $KRNLDIR/kernel.c -Wall -Wextra -nostdlib -nostartfiles -nodefaultlibs
-##
-echo "Building Floppy [1/boot]"
-dd status=noxfer conv=notrunc if=$CURRDIR/Boot.bin of=$CURRDIR/BeastFloppy.flp
-dd if=/dev/zero of=$CURRDIR/beastFloppy.flp bs=1024 count=1440
-dd if=$CURRDIR/Boot.bin of=$CURRDIR/beastFloppy.flp seek=0 count=1 conv=notrunc
+i686-elf-as $BOOTDIR/boot.s -o $BINDIR/boot.o
+echo "=======================[0/base/boot]======================="
+echo "Compile [0/base/krnl]"
+bash $CURRDIR/compile_c_cpp.sh
+echo "=======================[0/base/krnl]======================="
+echo "Linking [0.5/krnl]"
+i686-elf-gcc -fno-rtti -fno-exceptions -T $KRNLDIR/linker.ld -o beastOS.bin -ffreestanding -O2 -nostdlib $BINDIR/boot.o $BINDIR/kernel.o -lgcc -fno-rtti -fno-exceptions
+echo "=======================[0.5/krnl]=========================="
+bash grub_check.sh
 echo "Done!"

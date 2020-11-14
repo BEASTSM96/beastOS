@@ -1,25 +1,13 @@
 echo "Building OS iso image..."
 MYDIR="$(dirname "$(realpath "$0")")"
+BINDIR=$MYDIR/bin
 
 /bin/bash $MYDIR/build_floppy.sh
-mkdir $MYDIR/iso
-cp $MYDIR/BeastFloppy.flp $MYDIR/iso/
 
-echo "Building ISO file!"
-echo "|      [SETTINGS]                 |"
-echo "|=================================|"
-echo "|      [beastVolume]              |"
-echo "|      [iso8859 (iso8859-1)]      |"
-echo "|      [beastfloppy]              |"
-echo "|=================================|"
+mkdir -p isodir/boot/grub
+cp $MYDIR/beastOS.bin isodir/boot/beastOS.bin
+cp $MYDIR/grub.cfg isodir/boot/grub/grub.cfg
 
-genisoimage -V 'beastVolume' \
-            -input-charset iso8859-1 \
-            -o $MYDIR/beastiso.iso \
-            -b BeastFloppy.flp \
-            -hide BeastFloppy.flp $MYDIR/iso
-rm $MYDIR/iso/BeastFloppy.flp
-rmdir $MYDIR/iso
-echo "Done!"
+grub-mkrescue -o $MYDIR/beastiso.iso isodir
 
 echo "_beast_iso.iso"
