@@ -7,6 +7,7 @@ namespace bOS::Kernel
     public:
         static void Interrupts_Disable();
         static void Interrupts_Enable();
+        static void Interrupts_Enable(bool sysp);
         static void Interrupts_Enabled();
     };
 } // namespace bOS::Kernel
