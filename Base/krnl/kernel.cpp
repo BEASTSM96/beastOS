@@ -1,6 +1,7 @@
 #include "kernel.h"
 #include "Common/Base_defs.h"
 #include "Common/VGA.h"
+#include "Common/Interrupts.h"
 
 namespace bOS::Kernel
 {
@@ -76,6 +77,8 @@ namespace bOS::Kernel
     extern "C" {
     void kernel_main(void)
     {
+        //should we maybe use a static void for the run?
+        //TODO: ^
         bOS::Kernel::Kernel krnl = bOS::Kernel::Kernel();
 
         Terminal GLB_LOGGER = Terminal();
@@ -95,8 +98,10 @@ namespace bOS::Kernel
         Kernel_Loader_Terminal.Terminal_WriteString("Loading...");
         Kernel_Loader_Terminal.Terminal_WriteString("\n\n");
         
-        for(;;) {
-            hlt();
-        }
+
+        ///////////////////////////////
+        // ------> START INTERRUPTS //
+        /////////////////////////////
+        Interrupts::Interrupts_Enable();
     }
 }
